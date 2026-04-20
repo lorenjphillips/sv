@@ -43,8 +43,8 @@ Launchd job installed. Run `sv sync` to back up now.
 | Tool | Skills / Rules | Config | Memory | Conversations |
 |------|---------------|--------|--------|---------------|
 | Claude Code | `skills/`, `agents/`, `commands/` | `settings.json` | `projects/*/memory/` | `projects/*.jsonl` |
-| Cursor | `rules/` | `settings.json`, `mcp.json` | | |
-| Codex | | `config.yaml`, `instructions.md` | | |
+| Cursor | `rules/`, `skills-cursor/` | `settings.json`, `mcp.json`, `argv.json` | | `projects/` |
+| Codex | `skills/` | `config.toml`, `config.yaml` | `memories/` | `sessions/` |
 | Windsurf | `rules/` | `settings.json` | `memories/` | |
 | Aider | | `.aider.conf.yml` | | `chat-history/` |
 | Continue | `rules/` | `config.json`, `config.ts`, `config.yaml` | | |
@@ -55,9 +55,9 @@ Launchd job installed. Run `sv sync` to back up now.
 | Tabnine | | `config/` | | |
 | Supermaven | | config dir | | |
 | Zed AI | `rules/` | `settings.json`, `keymap.json` | | `conversations/` |
-| Warp AI | | `config.yaml` | | `sessions/` |
+| Warp AI | | `config.yaml`, `launch_configurations/` | | `sessions/` |
 | Amazon Q | | config dir | | |
-| Gemini CLI | | `settings.json` | | `history/` |
+| Gemini CLI | | `settings.json`, `GEMINI.md`, `mcp_config.json` | `antigravity/knowledge/` | `antigravity/`, `history/` |
 | Claude Dev | | `config.json` | | `tasks/` |
 
 ## Backup Targets

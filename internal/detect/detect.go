@@ -66,8 +66,12 @@ var KnownTools = []Tool{
 		Description: "OpenAI Codex CLI",
 		Dir:         "~/.codex",
 		Paths: []BackupPath{
+			{CategorySkills, "~/.codex/skills", ""},
+			{CategoryMemory, "~/.codex/memories", ""},
+			{CategoryConfig, "~/.codex/config.toml", ""},
 			{CategoryConfig, "~/.codex/config.yaml", ""},
 			{CategoryConfig, "~/.codex/instructions.md", ""},
+			{CategoryConversations, "~/.codex/sessions", ""},
 		},
 	},
 	{
@@ -170,6 +174,7 @@ var KnownTools = []Tool{
 		Dir:         "~/.warp",
 		Paths: []BackupPath{
 			{CategoryConfig, "~/.warp/config.yaml", ""},
+			{CategoryConfig, "~/.warp/launch_configurations", ""},
 			{CategoryConversations, "~/.warp/sessions", ""},
 		},
 	},
@@ -187,7 +192,12 @@ var KnownTools = []Tool{
 		Dir:         "~/.gemini",
 		Paths: []BackupPath{
 			{CategoryConfig, "~/.gemini/settings.json", ""},
+			{CategoryConfig, "~/.gemini/GEMINI.md", ""},
+			{CategoryConfig, "~/.gemini/mcp_config.json", ""},
+			{CategoryMemory, "~/.gemini/antigravity/knowledge", ""},
+			{CategoryMemory, "~/.gemini/antigravity/context_state", ""},
 			{CategoryConversations, "~/.gemini/history", ""},
+			{CategoryConversations, "~/.gemini/antigravity", ""},
 		},
 	},
 	{
