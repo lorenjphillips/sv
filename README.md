@@ -5,6 +5,10 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/lorenjphillips/sv)](go.mod)
 
+<p align="center">
+  <img src="assets/screenshot.png" alt="sv init" width="600">
+</p>
+
 Back up your AI agent skills, config, memory, and conversation logs across all installed tools.
 
 ## How It Works
