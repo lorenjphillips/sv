@@ -2,6 +2,7 @@ package backup
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -309,11 +310,11 @@ func verifyTimeMachine(cfg *config.Config) error {
 }
 
 func copyGlob(root, pattern, destDir string) error {
-	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+	return filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return nil
 		}
-		if info.IsDir() {
+		if d.IsDir() {
 			return nil
 		}
 		rel, _ := filepath.Rel(root, path)

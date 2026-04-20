@@ -2,6 +2,7 @@ package detect
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 )
@@ -235,8 +236,15 @@ func Scan() []Tool {
 
 func dirSize(path string) int64 {
 	var size int64
-	filepath.Walk(path, func(_ string, info os.FileInfo, _ error) error {
-		if info != nil && !info.IsDir() {
+	filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return nil
+		}
+		if !d.IsDir() {
+			info, err := d.Info()
+			if err != nil {
+				return nil
+			}
 			size += info.Size()
 		}
 		return nil
