@@ -26,15 +26,14 @@ var (
 
 	dimStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("240"))
-
 )
 
 const banner = `
-     _    _ _ _                    _ _
- ___| | _(_) | |  __ ____ _ _   _| | |_
-/ __| |/ / | | | / _/ _' | | | | | | __|
-\__ \   <| | | | \ \ (_| | |_| | | | |_
-|___/_|\_\_|_|_|  \__\__,_|\__,_|_|_|\__|
+     _    _ _ _                       _ _
+ ___| | _(_) | |    __   ____ _ _   _| | |_
+/ __| |/ / | | |____\ \ / / _` + "`" + ` | | | | | __|
+\__ \   <| | | |_____\ V / (_| | |_| | | |_
+|___/_|\_\_|_|_|      \_/ \__,_|\__,_|_|\__|
 `
 
 func init() {
@@ -225,7 +224,7 @@ func selectCategories(tools []detect.Tool, selectedNames []string) (map[string]c
 			continue
 		}
 
-		options := make([]huh.Option[string], 0)
+		options := make([]huh.Option[string], 0, len(categories))
 		for c := range categories {
 			options = append(options, huh.NewOption(c, c).Selected(true))
 		}

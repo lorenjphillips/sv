@@ -1,11 +1,42 @@
 # skill-vault
 
-Back up your AI agent skills, config, and conversation logs. Detects installed tools automatically.
+Back up your AI agent skills, config, memory, and conversation logs across all installed tools.
+
+## How It Works
+
+Run `skill-vault init` once. It scans for installed AI tools, lets you select what to back up, and configures backup targets. Subsequent syncs run manually or on a schedule.
+
+```
+$ skill-vault init
+
+Scanning for installed AI tools...
+
+  [x] Claude Code   skills, config, memory, conversations
+  [x] Cursor        rules, config
+  [x] Windsurf      rules, config, memory
+  [ ] Aider         config, conversations
+  [ ] Continue      rules, config
+
+Backup targets:
+
+  [x] Git (github.com/you/ai-backup)
+  [x] AWS S3 (s3://my-ai-backups)
+  [ ] Google Cloud Storage
+  [ ] Azure Blob Storage
+  [ ] iCloud Drive
+  [ ] Time Machine
+
+Schedule automatic backups? [y/N]: y
+Interval (default 24h): 24h
+
+Config written to ~/.skill-vault/config.yaml
+Launchd job installed. Run `skill-vault sync` to back up now.
+```
 
 ## Supported Tools
 
-| Tool | Skills/Rules | Config | Memory | Conversations |
-|------|-------------|--------|--------|---------------|
+| Tool | Skills / Rules | Config | Memory | Conversations |
+|------|---------------|--------|--------|---------------|
 | Claude Code | `skills/`, `agents/`, `commands/` | `settings.json` | `projects/*/memory/` | `projects/*.jsonl` |
 | Cursor | `rules/` | `settings.json`, `mcp.json` | | |
 | Codex | | `config.yaml`, `instructions.md` | | |
@@ -26,16 +57,16 @@ Back up your AI agent skills, config, and conversation logs. Detects installed t
 
 ## Backup Targets
 
-| Target | What it backs up | Requires |
-|--------|-----------------|----------|
-| **Git** (GitHub/GitLab) | Skills, config, memory, rules | `git` |
-| **AWS S3** | Conversation logs (compressed) | `aws` CLI |
-| **Google Cloud Storage** | Conversation logs (compressed) | `gcloud` CLI |
-| **Azure Blob Storage** | Conversation logs (compressed) | `az` CLI |
-| **iCloud Drive** | Conversation logs (compressed) | macOS |
-| **Time Machine** | Verifies tool dirs are included | macOS |
+| Target | What gets backed up | Requires |
+|--------|---------------------|----------|
+| Git (GitHub / GitLab) | Skills, config, memory, rules | `git` |
+| AWS S3 | Conversation logs (compressed) | `aws` CLI |
+| Google Cloud Storage | Conversation logs (compressed) | `gcloud` CLI |
+| Azure Blob Storage | Conversation logs (compressed) | `az` CLI |
+| iCloud Drive | Conversation logs (compressed) | macOS |
+| Time Machine | Verifies tool dirs are included | macOS |
 
-## Install
+## Installation
 
 ```bash
 go install github.com/lorenjphillips/skill-vault@latest
@@ -43,39 +74,25 @@ go install github.com/lorenjphillips/skill-vault@latest
 
 ## Usage
 
-### Setup
+### `skill-vault init`
 
-```bash
-skill-vault init
-```
+Interactive setup. Detects installed tools, configures backup targets, and optionally installs a macOS launchd job for automatic syncs.
 
-Interactive setup that:
-1. Scans for installed AI tools
-2. Lets you select which tools and categories to back up
-3. Configures backup targets (git, cloud storage, iCloud, Time Machine)
-4. Optionally sets up a macOS launchd job for automatic backups
+### `skill-vault sync`
 
-### Manual Sync
+Run a backup immediately using the current config.
 
-```bash
-skill-vault sync
-```
+### `skill-vault status`
 
-### Check Status
+Show the last sync time and state of each configured target.
 
-```bash
-skill-vault status
-```
+### `skill-vault uninstall`
 
-### Remove Schedule
-
-```bash
-skill-vault uninstall
-```
+Remove the scheduled launchd job.
 
 ## Config
 
-Stored at `~/.skill-vault/config.yaml`:
+`skill-vault init` writes `~/.skill-vault/config.yaml`. You can edit it directly.
 
 ```yaml
 tools:
@@ -85,16 +102,19 @@ tools:
   cursor:
     enabled: true
     categories: [rules, config]
+
 git:
   enabled: true
   provider: github
   repo: git@github.com:you/ai-backup.git
   local_path: ~/Development/ai-backup
+
 s3:
   enabled: true
   bucket: my-ai-backups
   profile: default
   region: us-east-1
+
 schedule:
   enabled: true
   interval: 24h
@@ -104,9 +124,13 @@ schedule:
 
 - macOS (launchd scheduling)
 - `git` and `rsync` for git-based backup
-- `tar` for cloud storage backup (compression)
-- Cloud CLI only if using that target: `aws`, `gcloud`, or `az`
+- `tar` for cloud storage backup
+- Cloud CLI matching your target: `aws`, `gcloud`, or `az`
+
+## Contributing
+
+PRs welcome.
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).

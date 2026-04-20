@@ -85,7 +85,9 @@ func Load() (*Config, error) {
 }
 
 func (c *Config) Save() error {
-	os.MkdirAll(Dir(), 0755)
+	if err := os.MkdirAll(Dir(), 0755); err != nil {
+		return err
+	}
 	data, err := yaml.Marshal(c)
 	if err != nil {
 		return err

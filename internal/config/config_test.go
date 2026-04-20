@@ -36,7 +36,7 @@ func TestConfigRoundTrip(t *testing.T) {
 			StorageAcct:   "mystorageaccount",
 			ResourceGroup: "my-rg",
 		},
-		ICloud: ICloudConfig{Enabled: true},
+		ICloud:      ICloudConfig{Enabled: true},
 		TimeMachine: TimeMachineConfig{Enabled: false},
 		Schedule: ScheduleConfig{
 			Enabled:  true,

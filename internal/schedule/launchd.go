@@ -96,7 +96,7 @@ func Install(intervalStr string) error {
 		return err
 	}
 
-	exec.Command("launchctl", "unload", path).Run()
+	_ = exec.Command("launchctl", "unload", path).Run()
 	if err := exec.Command("launchctl", "load", path).Run(); err != nil {
 		return fmt.Errorf("launchctl load: %w", err)
 	}

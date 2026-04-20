@@ -1,2 +1,4 @@
 skill-vault
 dist/
+*.test
+*.out

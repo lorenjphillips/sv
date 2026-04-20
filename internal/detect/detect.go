@@ -236,7 +236,7 @@ func Scan() []Tool {
 
 func dirSize(path string) int64 {
 	var size int64
-	filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+	_ = filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return nil
 		}

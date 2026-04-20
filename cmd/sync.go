@@ -23,7 +23,7 @@ var syncCmd = &cobra.Command{
 func runSync(cmd *cobra.Command, args []string) error {
 	cfg, err := config.Load()
 	if err != nil {
-		return fmt.Errorf("no config found — run 'skill-vault init' first: %w", err)
+		return fmt.Errorf("no config found: %w", err)
 	}
 
 	start := time.Now()

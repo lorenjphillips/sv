@@ -64,13 +64,13 @@ func syncGit(cfg *config.Config) error {
 	branch := detectDefaultBranch(repoDir)
 	if err := runIn(repoDir, "git", "pull", "--rebase", "origin", branch); err != nil {
 		if stashed {
-			runIn(repoDir, "git", "stash", "pop")
+			_ = runIn(repoDir, "git", "stash", "pop")
 		}
 		return fmt.Errorf("pull: %w", err)
 	}
 
 	if stashed {
-		runIn(repoDir, "git", "stash", "drop")
+		_ = runIn(repoDir, "git", "stash", "drop")
 	}
 
 	for name, tool := range cfg.Tools {
@@ -143,7 +143,9 @@ func syncTool(repoDir, name string, tool config.ToolConfig) error {
 		}
 
 		destDir := filepath.Join(repoDir, name, string(bp.Category))
-		os.MkdirAll(destDir, 0755)
+		if err := os.MkdirAll(destDir, 0755); err != nil {
+			return err
+		}
 
 		if bp.Pattern != "" {
 			if err := copyGlob(src, bp.Pattern, destDir); err != nil {
@@ -282,10 +284,10 @@ func verifyTimeMachine(cfg *config.Config) error {
 	configDir := config.Dir()
 	out, err := exec.Command("tmutil", "isexcluded", configDir).CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("could not check Time Machine status: %w", err)
+		return fmt.Errorf("could not check time machine status: %w", err)
 	}
 	if strings.Contains(string(out), "[Excluded]") {
-		return fmt.Errorf("%s is excluded from Time Machine — run: tmutil removeexclusion -p %s", configDir, configDir)
+		return fmt.Errorf("%s is excluded from time machine — run: tmutil removeexclusion -p %s", configDir, configDir)
 	}
 	fmt.Printf("  Time Machine: %s is included in backups\n", configDir)
 
@@ -334,7 +336,6 @@ func copyGlob(root, pattern, destDir string) error {
 			}
 		}
 		if matched {
-			rel, _ := filepath.Rel(root, path)
 			dest := filepath.Join(destDir, rel)
 			os.MkdirAll(filepath.Dir(dest), 0755)
 			return copyFile(path, dest)
