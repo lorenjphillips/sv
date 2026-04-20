@@ -282,24 +282,30 @@ func syncCloudConversations(cfg *config.Config, uploadFn func(archive, key strin
 				continue
 			}
 
-			datestamp := time.Now().Format("20060102")
-			archive := filepath.Join(os.TempDir(), fmt.Sprintf("%s-conversations-%s.tar.gz",
-				name, datestamp))
-			defer os.Remove(archive)
-
-			fmt.Printf("  Compressing %s conversations...\n", toolDef.Description)
-			if err := run("tar", "czf", archive, "-C", filepath.Dir(src), filepath.Base(src)); err != nil {
-				return fmt.Errorf("tar %s: %w", name, err)
-			}
-
-			key := fmt.Sprintf("%s-conversations-%s.tar.gz", name, datestamp)
-			if err := uploadFn(archive, key); err != nil {
+			if err := compressAndUpload(name, toolDef.Description, src, uploadFn); err != nil {
 				return err
 			}
-
-			fmt.Printf("  Uploaded %s\n", key)
 		}
 	}
+	return nil
+}
+
+func compressAndUpload(name, description, src string, uploadFn func(archive, key string) error) error {
+	datestamp := time.Now().Format("20060102")
+	archive := filepath.Join(os.TempDir(), fmt.Sprintf("%s-conversations-%s.tar.gz", name, datestamp))
+	defer os.Remove(archive)
+
+	fmt.Printf("  Compressing %s conversations...\n", description)
+	if err := run("tar", "czf", archive, "-C", filepath.Dir(src), filepath.Base(src)); err != nil {
+		return fmt.Errorf("tar %s: %w", name, err)
+	}
+
+	key := fmt.Sprintf("%s-conversations-%s.tar.gz", name, datestamp)
+	if err := uploadFn(archive, key); err != nil {
+		return err
+	}
+
+	fmt.Printf("  Uploaded %s\n", key)
 	return nil
 }
 
