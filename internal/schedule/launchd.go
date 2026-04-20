@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const plistLabel = "com.skill-vault.sync"
+const plistLabel = "com.sv.sync"
 
 const plistTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -69,7 +69,7 @@ func Install(intervalStr string) error {
 	}
 
 	home, _ := os.UserHomeDir()
-	logDir := filepath.Join(home, ".skill-vault")
+	logDir := filepath.Join(home, ".sv")
 	os.MkdirAll(logDir, 0755)
 
 	data := plistData{
@@ -140,7 +140,7 @@ func Status() string {
 
 func LastRun() string {
 	home, _ := os.UserHomeDir()
-	logPath := filepath.Join(home, ".skill-vault", "sync.log")
+	logPath := filepath.Join(home, ".sv", "sync.log")
 	info, err := os.Stat(logPath)
 	if err != nil {
 		return "never"

@@ -16,7 +16,7 @@ func TestConfigRoundTrip(t *testing.T) {
 		Git: GitConfig{
 			Enabled:   true,
 			Provider:  "github",
-			Repo:      "user/skill-vault-backup",
+			Repo:      "user/ai-backup",
 			LocalPath: "/tmp/backup",
 		},
 		S3: S3Config{
@@ -98,15 +98,15 @@ func TestConfigRoundTrip(t *testing.T) {
 
 func TestDirReturnsSuffix(t *testing.T) {
 	d := Dir()
-	if !strings.HasSuffix(d, ".skill-vault") {
-		t.Errorf("Dir() = %q, want suffix \".skill-vault\"", d)
+	if !strings.HasSuffix(d, ".sv") {
+		t.Errorf("Dir() = %q, want suffix \".sv\"", d)
 	}
 }
 
 func TestPathReturnsSuffix(t *testing.T) {
 	p := Path()
-	if !strings.HasSuffix(p, ".skill-vault/config.yaml") {
-		t.Errorf("Path() = %q, want suffix \".skill-vault/config.yaml\"", p)
+	if !strings.HasSuffix(p, ".sv/config.yaml") {
+		t.Errorf("Path() = %q, want suffix \".sv/config.yaml\"", p)
 	}
 }
 

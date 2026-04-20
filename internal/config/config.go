@@ -65,7 +65,7 @@ type Config struct {
 
 func Dir() string {
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".skill-vault")
+	return filepath.Join(home, ".sv")
 }
 
 func Path() string {

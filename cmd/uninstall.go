@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/lorenjphillips/skill-vault/internal/schedule"
+	"github.com/lorenjphillips/sv/internal/schedule"
 )
 
 func init() {

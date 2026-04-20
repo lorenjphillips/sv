@@ -10,9 +10,9 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 
-	"github.com/lorenjphillips/skill-vault/internal/config"
-	"github.com/lorenjphillips/skill-vault/internal/detect"
-	"github.com/lorenjphillips/skill-vault/internal/schedule"
+	"github.com/lorenjphillips/sv/internal/config"
+	"github.com/lorenjphillips/sv/internal/detect"
+	"github.com/lorenjphillips/sv/internal/schedule"
 )
 
 var (
@@ -29,11 +29,10 @@ var (
 )
 
 const banner = `
-     _    _ _ _                       _ _
- ___| | _(_) | |    __   ____ _ _   _| | |_
-/ __| |/ / | | |____\ \ / / _` + "`" + ` | | | | | __|
-\__ \   <| | | |_____\ V / (_| | |_| | | |_
-|___/_|\_\_|_|_|      \_/ \__,_|\__,_|_|\__|
+ _____   __
+/ __\ \ / /
+\__ \\ V /
+|___/ \_/
 `
 
 func init() {
@@ -172,7 +171,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println()
-	fmt.Println(dimStyle.Render("Run 'skill-vault sync' to back up now."))
+	fmt.Println(dimStyle.Render("Run 'sv sync' to back up now."))
 	return nil
 }
 
@@ -275,7 +274,7 @@ func selectBackupTargets(toolConfigs map[string]config.ToolConfig) ([]string, er
 
 	var selected []string
 	err := checkCancel(huh.NewMultiSelect[string]().
-		Title("Where should skill-vault back up to?").
+		Title("Where should sv back up to?").
 		Description(cloudHint).
 		Options(options...).
 		Value(&selected).
@@ -418,7 +417,7 @@ func configureSchedule() (config.ScheduleConfig, error) {
 
 	var intervalChoice string
 	err = checkCancel(huh.NewSelect[string]().
-		Title("How often should skill-vault sync?").
+		Title("How often should sv sync?").
 		Options(
 			huh.NewOption("Every 6 hours", "6h"),
 			huh.NewOption("Every 12 hours", "12h"),

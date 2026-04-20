@@ -5,9 +5,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/lorenjphillips/skill-vault/internal/config"
-	"github.com/lorenjphillips/skill-vault/internal/detect"
-	"github.com/lorenjphillips/skill-vault/internal/schedule"
+	"github.com/lorenjphillips/sv/internal/config"
+	"github.com/lorenjphillips/sv/internal/detect"
+	"github.com/lorenjphillips/sv/internal/schedule"
 )
 
 func init() {
@@ -21,11 +21,11 @@ var statusCmd = &cobra.Command{
 }
 
 func runStatus(cmd *cobra.Command, args []string) error {
-	fmt.Println(titleStyle.Render("skill-vault status"))
+	fmt.Println(titleStyle.Render("sv status"))
 
 	cfg, err := config.Load()
 	if err != nil {
-		fmt.Println(dimStyle.Render("Not configured — run 'skill-vault init'"))
+		fmt.Println(dimStyle.Render("Not configured — run 'sv init'"))
 		fmt.Println()
 		fmt.Println("Detected tools:")
 		for _, t := range detect.Scan() {
@@ -58,7 +58,7 @@ func runStatus(cmd *cobra.Command, args []string) error {
 	printTarget(cfg.S3.Enabled, "AWS S3", cfg.S3.Bucket)
 	printTarget(cfg.GCS.Enabled, "Google Cloud Storage", cfg.GCS.Bucket)
 	printTarget(cfg.Azure.Enabled, "Azure Blob", cfg.Azure.Container)
-	printTarget(cfg.ICloud.Enabled, "iCloud Drive", "~/Library/Mobile Documents/.../skill-vault/")
+	printTarget(cfg.ICloud.Enabled, "iCloud Drive", "~/Library/Mobile Documents/.../sv/")
 	printTarget(cfg.TimeMachine.Enabled, "Time Machine", "verify inclusion")
 
 	fmt.Println()

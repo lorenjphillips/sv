@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lorenjphillips/skill-vault/internal/config"
-	"github.com/lorenjphillips/skill-vault/internal/detect"
+	"github.com/lorenjphillips/sv/internal/config"
+	"github.com/lorenjphillips/sv/internal/detect"
 )
 
 func Run(cfg *config.Config) error {
@@ -58,7 +58,7 @@ func syncGit(cfg *config.Config) error {
 	}
 
 	stashOut, _ := runInCapture(repoDir, "git", "stash", "push", "--include-untracked", "-m",
-		fmt.Sprintf("skill-vault auto-stash %s", time.Now().Format("2006-01-02 15:04")))
+		fmt.Sprintf("sv auto-stash %s", time.Now().Format("2006-01-02 15:04")))
 	stashed := !strings.Contains(stashOut, "No local changes to save")
 
 	branch := detectDefaultBranch(repoDir)
@@ -91,7 +91,7 @@ func syncGit(cfg *config.Config) error {
 		return nil
 	}
 
-	msg := fmt.Sprintf("skill-vault sync %s", time.Now().Format("2006-01-02 15:04"))
+	msg := fmt.Sprintf("sv sync %s", time.Now().Format("2006-01-02 15:04"))
 	if err := runIn(repoDir, "git", "commit", "-m", msg); err != nil {
 		return fmt.Errorf("commit: %w", err)
 	}
@@ -270,7 +270,7 @@ func syncAzure(cfg *config.Config) error {
 
 func syncICloud(cfg *config.Config) error {
 	home, _ := os.UserHomeDir()
-	icloudDir := filepath.Join(home, "Library", "Mobile Documents", "com~apple~CloudDocs", "skill-vault")
+	icloudDir := filepath.Join(home, "Library", "Mobile Documents", "com~apple~CloudDocs", "sv")
 	os.MkdirAll(icloudDir, 0755)
 
 	return syncCloudConversations(cfg, func(archive, key string) error {

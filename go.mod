@@ -1,4 +1,4 @@
-module github.com/lorenjphillips/skill-vault
+module github.com/lorenjphillips/sv
 
 go 1.24
 

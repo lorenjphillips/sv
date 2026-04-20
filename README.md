@@ -1,13 +1,13 @@
-# skill-vault
+# sv
 
 Back up your AI agent skills, config, memory, and conversation logs across all installed tools.
 
 ## How It Works
 
-Run `skill-vault init` once. It scans for installed AI tools, lets you select what to back up, and configures backup targets. Subsequent syncs run manually or on a schedule.
+Run `sv init` once. It scans for installed AI tools, lets you select what to back up, and configures backup targets. Subsequent syncs run manually or on a schedule.
 
 ```
-$ skill-vault init
+$ sv init
 
 Scanning for installed AI tools...
 
@@ -29,8 +29,8 @@ Backup targets:
 Schedule automatic backups? [y/N]: y
 Interval (default 24h): 24h
 
-Config written to ~/.skill-vault/config.yaml
-Launchd job installed. Run `skill-vault sync` to back up now.
+Config written to ~/.sv/config.yaml
+Launchd job installed. Run `sv sync` to back up now.
 ```
 
 ## Supported Tools
@@ -69,30 +69,30 @@ Launchd job installed. Run `skill-vault sync` to back up now.
 ## Installation
 
 ```bash
-go install github.com/lorenjphillips/skill-vault@latest
+go install github.com/lorenjphillips/sv@latest
 ```
 
 ## Usage
 
-### `skill-vault init`
+### `sv init`
 
 Interactive setup. Detects installed tools, configures backup targets, and optionally installs a macOS launchd job for automatic syncs.
 
-### `skill-vault sync`
+### `sv sync`
 
 Run a backup immediately using the current config.
 
-### `skill-vault status`
+### `sv status`
 
 Show the last sync time and state of each configured target.
 
-### `skill-vault uninstall`
+### `sv uninstall`
 
 Remove the scheduled launchd job.
 
 ## Config
 
-`skill-vault init` writes `~/.skill-vault/config.yaml`. You can edit it directly.
+`sv init` writes `~/.sv/config.yaml`. You can edit it directly.
 
 ```yaml
 tools:

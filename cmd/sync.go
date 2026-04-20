@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/lorenjphillips/skill-vault/internal/backup"
-	"github.com/lorenjphillips/skill-vault/internal/config"
+	"github.com/lorenjphillips/sv/internal/backup"
+	"github.com/lorenjphillips/sv/internal/config"
 )
 
 func init() {
@@ -27,7 +27,7 @@ func runSync(cmd *cobra.Command, args []string) error {
 	}
 
 	start := time.Now()
-	fmt.Println(titleStyle.Render("skill-vault sync"))
+	fmt.Println(titleStyle.Render("sv sync"))
 
 	if err := backup.Run(cfg); err != nil {
 		return err

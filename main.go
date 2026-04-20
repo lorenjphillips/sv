@@ -1,6 +1,6 @@
 package main
 
-import "github.com/lorenjphillips/skill-vault/cmd"
+import "github.com/lorenjphillips/sv/cmd"
 
 func main() {
 	cmd.Execute()

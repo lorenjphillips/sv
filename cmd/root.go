@@ -8,9 +8,9 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "skill-vault",
+	Use:   "sv",
 	Short: "Back up your AI agent skills, config, and conversation logs",
-	Long: `skill-vault detects installed AI coding tools and backs up their skills,
+	Long: `sv detects installed AI coding tools and backs up their skills,
 configs, memory, and conversation logs.
 
 Supports 17 tools including Claude Code, Cursor, Codex, Windsurf, Aider,
