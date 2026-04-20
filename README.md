@@ -15,6 +15,9 @@ Back up your AI agent skills, config, memory, and conversation logs across all i
 go install github.com/lorenjphillips/sv@latest
 ```
 
+> If `sv` isn't found after install, add Go's bin directory to your PATH:
+> `export PATH=$PATH:$(go env GOPATH)/bin`
+
 ## How It Works
 
 Run `sv init` once. It scans for installed AI tools, lets you select what to back up, and configures backup targets. Subsequent syncs run manually or on a schedule.
