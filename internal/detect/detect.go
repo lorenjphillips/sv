@@ -54,8 +54,11 @@ var KnownTools = []Tool{
 		Dir:         "~/.cursor",
 		Paths: []BackupPath{
 			{CategoryRules, "~/.cursor/rules", ""},
+			{CategorySkills, "~/.cursor/skills-cursor", ""},
 			{CategoryConfig, "~/.cursor/settings.json", ""},
 			{CategoryConfig, "~/.cursor/mcp.json", ""},
+			{CategoryConfig, "~/.cursor/argv.json", ""},
+			{CategoryConversations, "~/.cursor/projects", ""},
 		},
 	},
 	{
