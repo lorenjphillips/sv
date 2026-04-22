@@ -72,14 +72,16 @@ Launchd job installed. Run `sv sync` to back up now.
 
 ## Backup Targets
 
-| Target | What gets backed up | Requires |
-|--------|---------------------|----------|
-| Git (GitHub / GitLab) | Skills, config, memory, rules | `git` |
-| AWS S3 | Conversation logs (compressed) | `aws` CLI |
-| Google Cloud Storage | Conversation logs (compressed) | `gcloud` CLI |
-| Azure Blob Storage | Conversation logs (compressed) | `az` CLI |
-| iCloud Drive | Conversation logs (compressed) | macOS |
-| Time Machine | Verifies tool dirs are included | macOS |
+Skills, config, memory, and rules are version-controlled in Git. Conversation logs are too large for Git and go to cloud storage as compressed daily archives.
+
+| Target | What it stores | Requires |
+|--------|---------------|----------|
+| **Git** (GitHub / GitLab) | Skills, config, memory, rules | `git`, `rsync` |
+| **AWS S3** | Conversation logs (compressed) | `aws` CLI |
+| **Google Cloud Storage** | Conversation logs (compressed) | `gcloud` CLI |
+| **Azure Blob Storage** | Conversation logs (compressed) | `az` CLI |
+| **iCloud Drive** | Conversation logs (compressed) | macOS |
+| **Time Machine** | Verifies tool dirs are included | macOS |
 
 ## Installation
 

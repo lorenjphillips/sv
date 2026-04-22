@@ -211,6 +211,10 @@ func syncTool(repoDir, name string, tool config.ToolConfig) error {
 		if !enabledCategories[string(bp.Category)] {
 			continue
 		}
+		// Conversations are too large for git — they go to cloud targets only.
+		if bp.Category == detect.CategoryConversations {
+			continue
+		}
 
 		src := detect.ExpandHome(bp.Path)
 		if _, err := os.Stat(src); os.IsNotExist(err) {

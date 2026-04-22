@@ -107,16 +107,14 @@ func runInit(cmd *cobra.Command, args []string) error {
 	// --- State variables bound across the wizard ---
 
 	var selectedTools []string
-	var backupTargets []string
 
-	// Per-tool category selections. Tools with only one category are
-	// auto-selected and skip the prompt (hidden group).
+	// Per-tool category selections.
 	type toolCats struct {
 		name        string
 		description string
 		options     []huh.Option[string]
 		selected    []string
-		autoSelect  bool // true when only one category exists
+		autoSelect  bool
 	}
 
 	var perTool []toolCats
@@ -144,10 +142,14 @@ func runInit(cmd *cobra.Command, args []string) error {
 		perTool = append(perTool, tc)
 	}
 
-	// --- Git config state ---
+	// --- Git target state ---
+	var enableGit bool
 	var gitProvider string
 	var gitRepo string
 	var gitLocalPath string
+
+	// --- Cloud conversation target state ---
+	var cloudTargets []string
 
 	// --- S3 config state ---
 	var s3Bucket string
@@ -162,15 +164,32 @@ func runInit(cmd *cobra.Command, args []string) error {
 	var azureContainer string
 	var azureStorageAcct string
 
+	// --- Time Machine state ---
+	var enableTimeMachine bool
+
 	// --- Schedule state ---
 	var schedEnabled bool
 	var intervalChoice string
+
+	// --- Helper: do any selected tools have conversations? ---
+	hasConversations := func() bool {
+		for i := range perTool {
+			if !slices.Contains(selectedTools, perTool[i].name) {
+				continue
+			}
+			for _, c := range perTool[i].selected {
+				if c == "conversations" {
+					return true
+				}
+			}
+		}
+		return false
+	}
 
 	// --- Build form groups ---
 
 	home, _ := os.UserHomeDir()
 
-	// Tool options for step 1.
 	toolOptions := make([]huh.Option[string], len(tools))
 	for i, t := range tools {
 		label := fmt.Sprintf("%s (%s)", t.Description, detect.FormatSize(t.DiskSize))
@@ -188,7 +207,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 		),
 	}
 
-	// Step 2: Per-tool category selection (one group per multi-category tool)
+	// Step 2: Per-tool category selection
 	for i := range perTool {
 		tc := &perTool[i]
 		if tc.autoSelect {
@@ -205,32 +224,12 @@ func runInit(cmd *cobra.Command, args []string) error {
 		}))
 	}
 
-	// Step 3: Backup targets
+	// Step 3: Git -- version control for skills, config, memory, and rules
 	groups = append(groups, huh.NewGroup(
-		huh.NewMultiSelect[string]().
-			Title("Where should sv back up to?").
-			DescriptionFunc(func() string {
-				for i := range perTool {
-					if !slices.Contains(selectedTools, perTool[i].name) {
-						continue
-					}
-					for _, c := range perTool[i].selected {
-						if c == "conversations" {
-							return "Recommended -- conversation logs are too large for git"
-						}
-					}
-				}
-				return "Compressed daily snapshots for conversation logs"
-			}, &selectedTools).
-			Options(
-				huh.NewOption("Git repository (GitHub, GitLab, etc.)", "git"),
-				huh.NewOption("AWS S3", "s3"),
-				huh.NewOption("Google Cloud Storage", "gcs"),
-				huh.NewOption("Azure Blob Storage", "azure"),
-				huh.NewOption("iCloud Drive", "icloud"),
-				huh.NewOption("Time Machine (verify inclusion)", "timemachine"),
-			).
-			Value(&backupTargets),
+		huh.NewConfirm().
+			Title("Version-control skills, config, memory, and rules with Git?").
+			Description("Keeps a full history of changes in a Git repository").
+			Value(&enableGit),
 	))
 
 	// Step 4: Git provider
@@ -244,7 +243,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 			).
 			Value(&gitProvider),
 	).WithHideFunc(func() bool {
-		return !slices.Contains(backupTargets, "git")
+		return !enableGit
 	}))
 
 	// Step 5: Git repo + local path
@@ -267,10 +266,26 @@ func runInit(cmd *cobra.Command, args []string) error {
 			Placeholder(home+"/Development/ai-backup").
 			Value(&gitLocalPath),
 	).WithHideFunc(func() bool {
-		return !slices.Contains(backupTargets, "git")
+		return !enableGit
 	}))
 
-	// Step 6: S3 config
+	// Step 6: Cloud storage for conversations (only if conversations selected)
+	groups = append(groups, huh.NewGroup(
+		huh.NewMultiSelect[string]().
+			Title("Where should conversation logs be stored?").
+			Description("Conversations are compressed into daily archives (too large for Git)").
+			Options(
+				huh.NewOption("AWS S3", "s3"),
+				huh.NewOption("Google Cloud Storage", "gcs"),
+				huh.NewOption("Azure Blob Storage", "azure"),
+				huh.NewOption("iCloud Drive", "icloud"),
+			).
+			Value(&cloudTargets),
+	).WithHideFunc(func() bool {
+		return !hasConversations()
+	}))
+
+	// Step 7: S3 config
 	groups = append(groups, huh.NewGroup(
 		huh.NewInput().
 			Title("S3 bucket name").
@@ -285,10 +300,10 @@ func runInit(cmd *cobra.Command, args []string) error {
 			Title("AWS region").
 			Value(&s3Region),
 	).WithHideFunc(func() bool {
-		return !slices.Contains(backupTargets, "s3")
+		return !slices.Contains(cloudTargets, "s3")
 	}))
 
-	// Step 7: GCS config
+	// Step 8: GCS config
 	groups = append(groups, huh.NewGroup(
 		huh.NewInput().
 			Title("GCS bucket name").
@@ -300,10 +315,10 @@ func runInit(cmd *cobra.Command, args []string) error {
 			Placeholder("my-project").
 			Value(&gcsProject),
 	).WithHideFunc(func() bool {
-		return !slices.Contains(backupTargets, "gcs")
+		return !slices.Contains(cloudTargets, "gcs")
 	}))
 
-	// Step 8: Azure config
+	// Step 9: Azure config
 	groups = append(groups, huh.NewGroup(
 		huh.NewInput().
 			Title("Blob container name").
@@ -313,10 +328,18 @@ func runInit(cmd *cobra.Command, args []string) error {
 			Title("Storage account name").
 			Value(&azureStorageAcct),
 	).WithHideFunc(func() bool {
-		return !slices.Contains(backupTargets, "azure")
+		return !slices.Contains(cloudTargets, "azure")
 	}))
 
-	// Step 9: Schedule toggle
+	// Step 10: Time Machine
+	groups = append(groups, huh.NewGroup(
+		huh.NewConfirm().
+			Title("Verify tool directories are included in Time Machine?").
+			Description("Checks that your AI tool directories are not excluded from backups").
+			Value(&enableTimeMachine),
+	))
+
+	// Step 11: Schedule toggle
 	groups = append(groups, huh.NewGroup(
 		huh.NewConfirm().
 			Title("Set up automatic backups?").
@@ -324,7 +347,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 			Value(&schedEnabled),
 	))
 
-	// Step 10: Schedule interval
+	// Step 12: Schedule interval
 	groups = append(groups, huh.NewGroup(
 		huh.NewSelect[string]().
 			Title("How often should sv sync?").
@@ -369,7 +392,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 		Tools: toolConfigs,
 	}
 
-	if slices.Contains(backupTargets, "git") {
+	if enableGit {
 		if gitLocalPath == "" {
 			gitLocalPath = home + "/Development/ai-backup"
 		}
@@ -380,7 +403,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 			LocalPath: gitLocalPath,
 		}
 	}
-	if slices.Contains(backupTargets, "s3") {
+	if slices.Contains(cloudTargets, "s3") {
 		cfg.S3 = config.S3Config{
 			Enabled: true,
 			Bucket:  s3Bucket,
@@ -388,24 +411,24 @@ func runInit(cmd *cobra.Command, args []string) error {
 			Region:  s3Region,
 		}
 	}
-	if slices.Contains(backupTargets, "gcs") {
+	if slices.Contains(cloudTargets, "gcs") {
 		cfg.GCS = config.GCSConfig{
 			Enabled: true,
 			Bucket:  gcsBucket,
 			Project: gcsProject,
 		}
 	}
-	if slices.Contains(backupTargets, "azure") {
+	if slices.Contains(cloudTargets, "azure") {
 		cfg.Azure = config.AzureConfig{
 			Enabled:     true,
 			Container:   azureContainer,
 			StorageAcct: azureStorageAcct,
 		}
 	}
-	if slices.Contains(backupTargets, "icloud") {
+	if slices.Contains(cloudTargets, "icloud") {
 		cfg.ICloud = config.ICloudConfig{Enabled: true}
 	}
-	if slices.Contains(backupTargets, "timemachine") {
+	if enableTimeMachine {
 		cfg.TimeMachine = config.TimeMachineConfig{Enabled: true}
 	}
 
