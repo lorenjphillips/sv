@@ -263,7 +263,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 			Value(&gitRepo),
 		huh.NewInput().
 			Title("Local clone path").
-			Placeholder(home+"/Development/ai-backup").
+			Placeholder(home+"/skill-vault").
 			Value(&gitLocalPath),
 	).WithHideFunc(func() bool {
 		return !enableGit
@@ -394,7 +394,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 
 	if enableGit {
 		if gitLocalPath == "" {
-			gitLocalPath = home + "/Development/ai-backup"
+			gitLocalPath = home + "/skill-vault"
 		}
 		cfg.Git = config.GitConfig{
 			Enabled:   true,
