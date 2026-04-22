@@ -29,12 +29,17 @@ var (
 			Foreground(lipgloss.Color("240"))
 )
 
-const banner = `
- _____   __
-/ __\ \ / /
-\__ \\ V /
-|___/ \_/
-`
+var bannerLines = [3]string{
+	"╔═╗╦╔═╦╦  ╦    ╦  ╦╔═╗╦ ╦╦  ╔╦╗",
+	"╚═╗╠╩╗║║  ║    ╚╗╔╝╠═╣║ ║║   ║ ",
+	"╚═╝╩ ╩╩╩═╝╩═╝   ╚╝ ╩ ╩╚═╝╩═╝ ╩ ",
+}
+
+var bannerGradient = [3]lipgloss.Style{
+	lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#5FFFFF")),
+	lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#AF87FF")),
+	lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#FF5FD7")),
+}
 
 func init() {
 	rootCmd.AddCommand(initCmd)
@@ -60,7 +65,11 @@ func checkCancel(err error) error {
 }
 
 func runInit(cmd *cobra.Command, args []string) error {
-	fmt.Println(titleStyle.Render(banner))
+	fmt.Println()
+	for i, line := range bannerLines {
+		fmt.Println(bannerGradient[i].Render("  " + line))
+	}
+	fmt.Println()
 	fmt.Println(dimStyle.Render("Back up your AI agent skills, config, and conversations."))
 	fmt.Println()
 
