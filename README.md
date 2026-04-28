@@ -22,9 +22,14 @@ go install github.com/lorenjphillips/sv@latest
 
 Run `sv init` once. It scans for installed AI tools, lets you select what to back up, and configures backup targets. Subsequent syncs run manually or on a schedule.
 
+```bash
+sv init
 ```
-$ sv init
 
+<details>
+<summary>Example output</summary>
+
+<pre>
 Scanning for installed AI tools...
 
   [x] Claude Code   skills, config, memory, conversations
@@ -47,7 +52,9 @@ Interval (default 24h): 24h
 
 Config written to ~/.sv/config.yaml
 Launchd job installed. Run `sv sync` to back up now.
-```
+</pre>
+
+</details>
 
 ## Supported Tools
 
